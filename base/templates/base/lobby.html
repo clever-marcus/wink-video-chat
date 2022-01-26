@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+{% extends 'base/main.html' %}
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {% block content %}
+    <main>
+        <section id="form-container">
+            <img id="logo" src="{% static 'images/chat-icon.png' %}" alt="" />
+
+            <div id="welcome-message">
+                <h1>Welcome to Wink</h1>
+                <p>Video chat with friends</p>
+            </div>
+
+            <form id="form">
+                <div class="form-field">
+                    <input type="text" name="wink" placeholder="Enter room name..."
+                        style="text-transform: uppercase;" />
+                </div>
+
+                <div class="form-field">
+                    <input type="text" name="username" placeholder="Enter your name..."
+                        style="text-transform: uppercase;" />
+                </div>
+
+                <div class="form-field">
+                    <input type="submit" value="Join Stream" />
+                </div>
+            </form>
+
+        </section>
+    </main>
+
+    <script type="text/javascript">
+        let form = document.getElementById('form')
+
+        let handleSubmit = async (e) => {
+            e.preventDefault()
+            let room = e.target.wink.value.toUpperCase()
+            let name = e.target.username.value
+
+
+            let response = await fetch(`/get_token/?channel=${room}`)
+            let data = await response.json()
+
+            let UID = data.uid
+            let token = data.token
+
+            sessionStorage.setItem('UID', UID)
+            sessionStorage.setItem('token', token)
+            sessionStorage.setItem('room', room)
+            sessionStorage.setItem('name', name)
+
+
+            window.open('/room', '_self') /*opens a room page on the same tab*/
+        }
+
+        form.addEventListener('submit', handleSubmit) //whenever the form is triggered, go ahead and add submit
+    </script>
+    {% endblock content %}
+</body>
+
+</html>
